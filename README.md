@@ -4,13 +4,15 @@
 🥶골드 <br>
 🥶매일2-3문제(필수2, 재량1)
 
-👽[3/8 ~ 3/14] [그래프 탐색](https://github.com/tony9402/baekjoon/tree/main/graph_traversal)-[최단거리](https://github.com/tony9402/baekjoon/tree/main/shortest_path) 순 <br>
+👽[3/15 ~ 3/21] [분할정복](https://github.com/tony9402/baekjoon/blob/main/divide_and_conquer)-[이분탐색](https://github.com/tony9402/baekjoon/blob/main/binary_search)-[누적합](https://github.com/tony9402/baekjoon/blob/main/prefix_sum) 순 <br>
+
 <details>
 <summary>예전 계획</summary>
 <div>
 
 👽[2월] DP1-구현-그리디 순 <br>
 👽[3월 1주차] [문자열](https://github.com/tony9402/baekjoon/tree/main/string)-[백트래킹] <br>
+👽[3/8 ~ 3/14] [그래프 탐색](https://github.com/tony9402/baekjoon/tree/main/graph_traversal)-[최단거리](https://github.com/tony9402/baekjoon/tree/main/shortest_path) 순 <br>
 
 </div>
 </details>
