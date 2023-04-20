@@ -6,47 +6,48 @@
 - 처음에는 단순히 직전 중 가장 큰 원이랑만 비교하면 된다고 생각했는데 예제 2를 보니까 가장 큰 원에는 포함되는데 
   내부에서 이전의 다른 원과 교차되는 경우가 있음을 깨달았다..ㅎ 
 - 그래서 어케할까 하다가 걍 스택에 계속 저장하고 스택의 원들과 비교해서 적절히 push/pop 하면 되지 않을까 했음 
-- 근데 나는 원의 시작과 끝을 모두 저장했는데 다른 사람들 풀이 보니까 그 괄호 문제처럼 끝만 저장하면 되는듯? 
+- 근데 나는 원의 시작과 끝을 모두 저장했는데 다른 사람들 풀이 보니까 그 괄호 문제처럼 아예 시작만 저장해도 되는 듯? 
+  그래서 for문으로 순회하면서 현재 확인하는 게 시작점이면 교차하지 않을 때만 push하고 
+  끝점도 현재 stack의 last가 동일한 인덱스를 갖는 지 확인해서 그럴 때만 pop하는 식...!
+  그 외의 경우는 교차하는 거니까 걍 바로 false 리턴하고 탈출하면 됨~
+  이게 덜 직관적이긴 한데 풀이 자체는 간단한 거 같아서 바꿔봤따 ㅎ
 */
 
 import Foundation
 
-typealias Range = (start: Int, end: Int)
+typealias Point = (x: Int, dir: Int, index: Int)
+private let pre = 0, post = 1
 
 func solution(_ circles: [[Int]]) -> Bool {
-    let circles = calculateRange(circles)
-    var stack = [Range]()
+    let circles = parse(circles)
+    var stack = [Point]()
 
-    for (start, end) in circles {
-        while let prev = stack.last {
-            let isIncluded = start > prev.start && end < prev.end, isExcluded = start > prev.end
+    for (x, dir, index) in circles {
 
-            if isIncluded {
-                break
-            } else if isExcluded {
-                stack.removeLast()
-            } else {
-                return false
-            }
+        if dir == pre, x > (stack.last?.x ?? .min) {
+            stack.append((x, dir, index))
+        } else if dir == post, index == stack.last!.index {
+            stack.removeLast()
+        } else {
+            return false
         }
-
-        stack.append((start, end))
     }
 
     return true
 }
 
-private func calculateRange(_ circles: [[Int]]) -> [Range] {
+private func parse(_ circles: [[Int]]) -> [Point] {
     let x = 0, r = 1
-    var result = [Range]()
+    var result = [Point]()
 
-    for circle in circles {
+    for (index, circle) in circles.enumerated() {
         let x = circle[x], r = circle[r]
 
-        result.append((x - r, x + r))
+        result.append((x - r, pre, index))
+        result.append((x + r, post, index))
     }
 
-    return result.sorted { $0.start != $1.start ? $0.start < $1.start : $0.end < $1.end }
+    return result.sorted { $0.x < $1.x }
 }
 
 var file = FileIO()
