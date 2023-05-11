@@ -2,95 +2,102 @@
 
 struct Heap<T> {
 
-   // MARK: - Properties
+    // MARK: - Properties
 
-   var count: Int { elements.count }
-   var isEmpty: Bool { elements.isEmpty }
-   var peek: T? { elements.first }
-
-   private var elements = [T]()
-   private var isRightHandSideFirst: (T, T) -> Bool
+    var count: Int { array.count }
+    var isEmpty: Bool { array.isEmpty }
+    var peek: T? { array.first }
+    var elements: [T] { array.sorted(by:isRightHandSideFirst) }
 
 
-   // MARK: - Init(s)
-
-   init(elements: [T] = [], orderCriteria: @escaping (T, T) -> Bool) {
-       self.isRightHandSideFirst = orderCriteria
-       self.heapify(elements)
-   }
+    private var array = [T]()
+    private var isRightHandSideFirst: (T, T) -> Bool
 
 
-   // MARK: - Methods
+    // MARK: - Init(s)
 
-   mutating func push(_ element: T) {
-       elements.append(element)
-       shiftUp(from: elements.endIndex - 1)
-   }
+    init(_ elements: [T] = [], orderCriteria: @escaping (T, T) -> Bool) {
+        self.isRightHandSideFirst = orderCriteria
+        self.heapify(elements)
+    }
 
-   mutating func push(_ elements: [T]) {
-       for element in elements {
-           push(element)
-       }
-   }
 
-   mutating func pop() -> T? {
-       guard !isEmpty else { return nil }
+    // MARK: - Methods
 
-       elements.swapAt(elements.startIndex, elements.endIndex - 1)
-       let peek = elements.removeLast()
-       shiftDown(from: .zero)
+    mutating func push(_ element: T) {
+        array.append(element)
+        shiftUp(from: array.endIndex - 1)
+    }
 
-       return peek
-   }
+    mutating func push(_ elements: [T]) {
+        for element in elements {
+            push(element)
+        }
+    }
 
-   private mutating func heapify(_ elements: [T]) {
-       self.elements = elements
-       for index in stride(from: elements.endIndex / 2 - 1, through: 0, by: -1) {
-           shiftDown(from: index)
-       }
-   }
+    @discardableResult
+    mutating func pop() -> T? {
+        guard !isEmpty else { return nil }
 
-   private mutating func shiftUp(from index: Int) {
-       var childIndex = index, parentIndex = self.parentIndex(of: childIndex)
-       let child = elements[childIndex]
+        array.swapAt(array.startIndex, array.endIndex - 1)
+        let peek = array.removeLast()
+        shiftDown(from: .zero)
 
-       while childIndex > .zero,
-             isRightHandSideFirst(child, elements[parentIndex]) {
+        return peek
+    }
 
-           elements.swapAt(childIndex, parentIndex)
-           childIndex = parentIndex
-           parentIndex = self.parentIndex(of: childIndex)
-       }
-   }
+    func print() {
+        Swift.print(elements)
+    }
 
-   private mutating func shiftDown(from index: Int) {
-       let leftChildIndex = leftChildIndex(of: index), rightChildIndex = rightChildIndex(of: index)
-       let endIndex = elements.endIndex
-       var parentIndex = index
+    private mutating func heapify(_ elements: [T]) {
+        self.array = elements
+        for index in stride(from: elements.endIndex / 2 - 1, through: 0, by: -1) {
+            shiftDown(from: index)
+        }
+    }
 
-       if leftChildIndex < endIndex, isRightHandSideFirst(elements[leftChildIndex], elements[parentIndex]) {
-           parentIndex = leftChildIndex
-       }
+    private mutating func shiftUp(from index: Int) {
+        var childIndex = index, parentIndex = self.parentIndex(of: childIndex)
+        let child = array[childIndex]
 
-       if rightChildIndex < endIndex, isRightHandSideFirst(elements[rightChildIndex], elements[parentIndex]) {
-           parentIndex = rightChildIndex
-       }
+        while childIndex > .zero,
+              isRightHandSideFirst(child, array[parentIndex]) {
 
-       if parentIndex == index { return }
+            array.swapAt(childIndex, parentIndex)
+            childIndex = parentIndex
+            parentIndex = self.parentIndex(of: childIndex)
+        }
+    }
 
-       elements.swapAt(index, parentIndex)
-       shiftDown(from: parentIndex)
-   }
+    private mutating func shiftDown(from index: Int) {
+        let leftChildIndex = leftChildIndex(of: index), rightChildIndex = rightChildIndex(of: index)
+        let endIndex = array.endIndex
+        var parentIndex = index
 
-   private func parentIndex(of index: Int) -> Int {
-       (index - 1) / 2
-   }
+        if leftChildIndex < endIndex, isRightHandSideFirst(array[leftChildIndex], array[parentIndex]) {
+            parentIndex = leftChildIndex
+        }
 
-   private func leftChildIndex(of index: Int) -> Int {
-       2 * index + 1
-   }
+        if rightChildIndex < endIndex, isRightHandSideFirst(array[rightChildIndex], array[parentIndex]) {
+            parentIndex = rightChildIndex
+        }
 
-   private func rightChildIndex(of index: Int) -> Int {
-       2 * index + 2
-   }
+        if parentIndex == index { return }
+
+        array.swapAt(index, parentIndex)
+        shiftDown(from: parentIndex)
+    }
+
+    private func parentIndex(of index: Int) -> Int {
+        (index - 1) / 2
+    }
+
+    private func leftChildIndex(of index: Int) -> Int {
+        2 * index + 1
+    }
+
+    private func rightChildIndex(of index: Int) -> Int {
+        2 * index + 2
+    }
 }
